@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Note: Logs are not teardown after running so that
-# people can check the output if there are failure
+# people can check the output if there are failures
+
 oneTimeSetUp(){
   rm -rf logs
   mkdir logs
@@ -31,7 +32,7 @@ test_syscallCountTracepoint(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile "tracepoint"
     assertFileNotContains $logfile "error"
@@ -43,7 +44,7 @@ test_readHistogram(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@@'
     assertFileNotContains $logfile "error"
@@ -55,7 +56,7 @@ test_printFileOpens(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile 'irqbalance|sleep'
     assertFileNotContains $logfile "error"
@@ -68,7 +69,7 @@ test_CPUprofiling(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@'
     assertFileNotContains $logfile "error"
@@ -80,7 +81,7 @@ test_syscallCountProgram(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile 'bpftrace'
     assertFileNotContains $logfile "error"
@@ -92,7 +93,7 @@ test_readBytesByProcess(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@'
     assertFileNotContains $logfile "error"
@@ -104,7 +105,7 @@ test_readSizeDistributionByProcess(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@@'
     assertFileNotContains $logfile "error"
@@ -116,7 +117,7 @@ test_perSecondSyscallRates(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@:'
     assertFileNotContains $logfile "error"
@@ -128,7 +129,7 @@ test_diskSizeByProcess(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     logline=$(grep -v '^$' $logfile | grep -v Attach | wc -l)
     assertTrue "[ $logline -gt 1 ]"
@@ -141,7 +142,7 @@ test_pageFaultsByProcess(){
     bpid=$!
     sleep 5
     kill -INT $bpid
-    sleep 2
+    sleep 5
 
     assertFileContains $logfile '@'
     assertFileNotContains $logfile "error"
@@ -153,4 +154,4 @@ test_pageFaultsByProcess(){
 # Count LLC cache misses by process name and PID (uses PMCs)
 # Profile user-level stacks at 99 Hertz, for PID 189
 
-. ./shunit2
+. ../shunit2

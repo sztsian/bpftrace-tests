@@ -1,0 +1,10 @@
+[General]
+name=bpftrace-tests-sanity
+owner="Zamir SUN"
+description="Sanity test for bpftrace, mainly the commands in bpftrace README.md"
+
+[restraint]
+entry_point=./runtest.sh
+repoRequires=shunit2
+use_pty=true
+
