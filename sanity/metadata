@@ -6,5 +6,7 @@ description="Sanity test for bpftrace, mainly the commands in bpftrace README.md
 [restraint]
 entry_point=./runtest.sh
 repoRequires=lib
+dependencies=bpftrace
+max_time=60m
 use_pty=true
 
