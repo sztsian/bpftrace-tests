@@ -1,0 +1,21 @@
+#!/bin/bash
+
+assertPass(){
+$@
+assertEquals 'assertPass failed' 0 $?
+}
+
+assertFail(){
+$@
+assertEquals 'assertFail failed' 1 $?
+}
+
+assertFileContains(){
+    assertPass egrep -q "$2" $1
+}
+
+assertFileNotContains(){
+    assertFail grep -i -q "$2" $1
+}
+
+. ../shunit2

@@ -8,24 +8,6 @@ oneTimeSetUp(){
   mkdir logs
 }
 
-assertPass(){
-$@
-assertEquals 'assertPass failed' 0 $?
-}
-
-assertFail(){
-$@
-assertEquals 'assertFail failed' 1 $?
-}
-
-assertFileContains(){
-    assertPass egrep -q "$2" $1
-}
-
-assertFileNotContains(){
-    assertFail grep -i -q "$2" $1
-}
-
 test_syscallCountTracepoint(){
     logfile="logs/syscallcount-tracepoint.log"
     bpftrace -e 'tracepoint:syscalls:sys_enter_* { @[probe] = count(); }' &> $logfile &
@@ -154,4 +136,4 @@ test_pageFaultsByProcess(){
 # Count LLC cache misses by process name and PID (uses PMCs)
 # Profile user-level stacks at 99 Hertz, for PID 189
 
-. ../shunit2
+. ../lib/include
