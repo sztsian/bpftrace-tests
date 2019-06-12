@@ -11,11 +11,12 @@ assertEquals 'assertFail failed' 1 $?
 }
 
 assertFileContains(){
-    assertPass egrep -q "$2" $1
+    egrep $2 $1 | grep -v 'grep' &>/dev/null
+    assertEquals 'Missing content in file' 0 $?
 }
-
 assertFileNotContains(){
-    assertFail grep -i -q "$2" $1
+    egrep $2 $1 | grep -v 'grep' &>/dev/null
+    assertEquals 'File should not contain the keyword' 1 $?
 }
 
-. ../shunit2
+. $(dirname $0)/../lib/shunit2
