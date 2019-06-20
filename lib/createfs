@@ -1,0 +1,24 @@
+#!/bin/bash
+
+FSSLOWPATH=/tmp/delayed
+
+# Create a filesystem with latency.
+# Param 1: filesystem type
+# Param 2: latency in ms
+createfsslow(){
+	modprobe brd rd_nr=1 rd_size=512000
+	size=$(blockdev --getsize /dev/ram0)
+	echo "0 $size delay /dev/ram0 0 $2"
+	echo "0 $size delay /dev/ram0 0 $2" | dmsetup create delayed
+	mkdir ${FSSLOWPATH}
+	mkfs -t $1 /dev/mapper/delayed
+	hdparm -W 0 /dev/mapper/delayed &>/dev/null
+	mount -t $1 /dev/mapper/delayed ${FSSLOWPATH}
+}
+
+destroyfsslow(){
+	umount ${FSSLOWPATH} &>/dev/null
+	dmsetup remove delayed
+	modprobe -r brd
+	rm -rf ${FSSLOWPATH}
+}

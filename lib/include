@@ -1,15 +1,18 @@
 #!/bin/bash
 
 assertPass(){
-$@
-assertEquals 'assertPass failed' 0 $?
+    $@
+    assertEquals 'assertPass failed' 0 $?
 }
 
 assertFail(){
-$@
-assertEquals 'assertFail failed' 1 $?
+    $@
+    assertEquals 'assertFail failed' 1 $?
 }
 
+# assertFileContains
+# Param1: Filename
+# Param2: pattern
 assertFileContains(){
     egrep $2 $1 | grep -v 'grep' &>/dev/null
     assertEquals 'Missing content in file' 0 $?
