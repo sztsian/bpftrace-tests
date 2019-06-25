@@ -7,7 +7,7 @@ LOGPREFIX=$(dirname $0)/logs/$(basename $0)
 oneTimeSetUp(){
 rm -rf ${LOGPREFIX}
 mkdir -p ${LOGPREFIX}
-ps -ef | grep 'bpftrace' | grep -v grep | awk '{print $2}' | xargs /usr/bin/kill -9 {} &> /dev/null || true
+/usr/bin/pkill -9 bpftrace || true
 }
 
 test_syscallCountTracepoint(){
