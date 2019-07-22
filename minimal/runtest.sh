@@ -10,6 +10,10 @@ mkdir -p ${LOGPREFIX}
 /usr/bin/pkill -9 bpftrace || true
 }
 
+oneTimeTearDown(){
+  . $(dirname $0)/../lib/testframeworks
+  uploadlogs || true
+}
 test_syscallCountTracepoint(){
     logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
     bpftrace -e 'tracepoint:syscalls:sys_enter_* { @[probe] = count(); }' &> $logfile &
@@ -36,7 +40,7 @@ test_readHistogram(){
 
 test_printFileOpens(){
     logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
-    bpftrace -e 'kprobe:do_sys_open { printf("%s: %s\n", comm, str(arg1)) }' &> $logfile &
+    unbuffer bpftrace -e 'kprobe:do_sys_open { printf("%s: %s\n", comm, str(arg1)) }' &> $logfile &
     bpid=$!
     sleep 5
     cat /etc/kdump.conf &>/dev/null
