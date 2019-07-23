@@ -4,6 +4,6 @@ uploadlogs(){
     if [ -f /usr/share/beakerlib/beakerlib.sh ]; then
         . /usr/bin/rhts-environment.sh
         . /usr/share/beakerlib/beakerlib.sh
-        for i in $(find . -iname \*.log) ; do rlFileSubmit $i $(echo $i | sed 's/^\.\/logs\///g'); done
+        for i in $(find . -iname \*.log) ; do rlFileSubmit $i $(echo $i | sed 's/^\.\/logs\///g;s/\//-/g'); done
     fi
 }
