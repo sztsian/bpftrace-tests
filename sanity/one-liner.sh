@@ -41,14 +41,13 @@ test_fileOpens(){
 
 test_syscallCountsByProcess(){
     logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
-    bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }' &> $logfile &
+    unbuffer bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }' &> $logfile &
     bpid=$!
     sleep 5
-    lscpu > /dev/null
-    /usr/bin/kill -INT $bpid
+    /usr/bin/pkill -INT bpftrace
     sleep 3
 
-    assertFileContains $logfile '@\[lscpu\]'
+    assertFileContains $logfile 'bpftrace|systemd'
     assertFileNotContains $logfile "error"
 }
 
