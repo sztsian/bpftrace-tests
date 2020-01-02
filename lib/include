@@ -2,14 +2,65 @@
 
 assertPass(){
     $@
-    assertEquals 'assertPass failed' 0 $?
+    assertEquals '$@ failed' 0 $?
 }
 
-assertFail(){
-    $@
-    assertEquals 'assertFail failed' 1 $?
+assertPassInt(){
+    $@ &
+    pid=$!;
+    sleep 5
+    kill -0 $pid
+    assertEquals '$@ exited early' 0 $?
+    kill -INT $pid
+    assertEquals '$@ failed' 0 $?
+    wait $pid
+    assertEquals '$@ returned $?' 0 $?
 }
 
+assertPassInt15(){
+    $@ &
+    pid=$!;
+    sleep 15
+    kill -0 $pid
+    assertEquals '$@ exited early' 0 $?
+    kill -INT $pid
+    assertEquals '$@ failed' 0 $?
+    wait $pid
+    assertEquals '$@ returned $?' 0 $?
+}
+
+assertPassTerm(){
+    $@ &
+    pid=$!;
+    sleep 5
+    kill -0 $pid
+    assertEquals '$@ exited early' 0 $?
+    kill -TERM $pid
+    assertEquals '$@ failed' 0 $?
+}
+
+assertPassIntCurses(){
+    export cursescmd=$@
+    expect << 'EOF'
+set timeout 10
+spawn  $env(cursescmd)
+expect {
+ timeout     { send \x03 }
+ eof
+}
+
+foreach {pid spawnid os_error_flag value} [wait] break
+
+if {$os_error_flag == 0} {
+    puts "exit status: $value"
+    exit $value
+} else {
+    puts "errno: $value"
+    exit $value
+}
+EOF
+    assertEquals '$@ failed' 0 $?
+}
 # assertFileContains
 # Param1: Filename
 # Param2: pattern
@@ -21,5 +72,12 @@ assertFileNotContains(){
     egrep $2 $1 | grep -v 'grep' &>/dev/null
     assertEquals 'File should not contain the keyword' 1 $?
 }
+
+skipIfNotExist(){
+    if ! [ -f $@ ]; then
+        startSkipping
+    fi
+}
+
 
 . $(dirname $0)/../lib/shunit2
