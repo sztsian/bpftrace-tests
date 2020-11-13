@@ -50,7 +50,7 @@ test_printFileOpens(){
 
 test_CPUprofiling(){
     logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
-    bpftrace -e 'profile:hz:99 { @[stack] = count() }' &> $logfile &
+    bpftrace -e 'profile:hz:99 { @[ustack] = count() }' &> $logfile &
     bpid=$!
     sleep 5
     /usr/bin/kill -INT $bpid
