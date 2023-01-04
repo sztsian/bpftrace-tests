@@ -70,7 +70,7 @@ test_kernelDynamicTracingofReadBytes(){
     sleep 5
     lscpu > /dev/null
     /usr/bin/kill -INT $bpid
-    sleep 3
+    sleep 5
     assertFileContains $logfile '@@'
     assertFileNotContains $logfile "error"
 }
@@ -81,7 +81,7 @@ test_timingReads(){
     bpid=$!
     sleep 3
     /usr/bin/kill -INT $bpid
-    sleep 3
+    sleep 5
     assertFileContains $logfile '@@'
     assertFileNotContains $logfile "error"
 }
@@ -130,6 +130,34 @@ test_kernelStructTracing(){
     lscpu > /dev/null
     /usr/bin/kill -INT $bpid
     assertFileContains $logfile 'open'
+}
+
+# kfuncBasic is added upon the dev request aiming at testing the BTF support
+test_kfuncBasic(){
+    logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
+    bpftrace -e 'kfunc:vfs_open { printf("kfuncOK") }' &> $logfile &
+    bpid=$!
+    sleep 3
+    cat /etc/redhat-release
+    sleep 2
+    /usr/bin/kill -INT $bpid
+    sleep 5
+    assertFileContains $logfile 'kfuncOK'
+    assertFileNotContains $logfile "error"
+}
+
+# kretfuncBasic is added upon the dev request aiming at testing the BTF support
+test_kretfuncBasic(){
+    logfile=${LOGPREFIX}/${FUNCNAME[ 0 ]}.log
+    bpftrace -e 'kretfunc:vfs_open { printf("kretfuncOK") }' &> $logfile &
+    bpid=$!
+    sleep 3
+    cat /etc/redhat-release
+    sleep 2
+    /usr/bin/kill -INT $bpid
+    sleep 5
+    assertFileContains $logfile 'kretfuncOK'
+    assertFileNotContains $logfile "error"
 }
 
 # tutorial_one_liners not tested:
